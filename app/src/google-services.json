@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "228369508285",
+    "firebase_url": "https://dbmusicconst-default-rtdb.firebaseio.com",
+    "project_id": "dbmusicconst",
+    "storage_bucket": "dbmusicconst.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228369508285:android:5d7d040ba16d7ff7d5d4d4",
+        "android_client_info": {
+          "package_name": "com.example.musicconstructor1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsbuzNkxNiMqBmMs4DSevzkLLlIBwYd1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228369508285:android:89d469abf1103189d5d4d4",
+        "android_client_info": {
+          "package_name": "com.example.musicconstructor2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsbuzNkxNiMqBmMs4DSevzkLLlIBwYd1Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

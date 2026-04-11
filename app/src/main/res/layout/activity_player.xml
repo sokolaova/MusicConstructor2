@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e9ecf1"
+    android:fitsSystemWindows="true"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <!-- ШАПКА -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_back"
+        android:padding="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="Назад"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:tint="#000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/tvHeaderTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Сейчас играет"
+        android:fontFamily="@font/sonkobold"
+        android:textColor="#000"
+        android:textSize="17sp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+    <!-- КОНТЕНТ -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnBack">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+            <!-- Обложка -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivCover"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_cover"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.83"
+                android:layout_marginTop="26dp"
+                app:shapeAppearanceOverlay="@style/RoundedCover"
+                app:strokeWidth="1dp"
+                app:strokeColor="#DDD" />
+
+            <!-- Название трека -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Название трека"
+                android:fontFamily="@font/sonkobold"
+                android:textColor="#000"
+                android:textSize="26sp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginTop="26dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivCover" />
+
+            <!-- Исполнитель -->
+            <TextView
+                android:id="@+id/tvArtist"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Исполнитель"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#666680"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+            <!-- SeekBar Прогресса -->
+            <SeekBar
+                android:id="@+id/seekBarProgress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:progressTint="#000"
+                android:thumbTint="#000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvArtist" />
+
+            <!-- Текущее время -->
+            <TextView
+                android:id="@+id/tvCurrentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#666680"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/seekBarProgress"
+                app:layout_constraintTop_toBottomOf="@id/seekBarProgress"
+                android:layout_marginTop="4dp" />
+
+            <!-- Общее время -->
+            <TextView
+                android:id="@+id/tvTotalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#666680"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@id/seekBarProgress"
+                app:layout_constraintTop_toBottomOf="@id/seekBarProgress"
+                android:layout_marginTop="4dp" />
+            <!-- Кнопки управления -->
+            <ImageView
+                android:id="@+id/btnPrevious"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_previous"
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Предыдущий"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="#000"
+                app:layout_constraintEnd_toStartOf="@id/btnPlay"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentTime"
+                android:layout_marginTop="16dp" />
+
+            <ImageView
+                android:id="@+id/btnPlay"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="46dp"
+                android:background="@drawable/bg_play_button"
+                android:clickable="true"
+                android:contentDescription="Воспроизвести"
+                android:focusable="true"
+                android:padding="5dp"
+                android:src="@drawable/ic_play"
+                app:layout_constraintEnd_toStartOf="@id/btnNext"
+                app:layout_constraintStart_toEndOf="@id/btnPrevious"
+                app:layout_constraintTop_toTopOf="@id/seekBarProgress"
+                app:tint="#e9ecf1" />
+
+            <ImageView
+                android:id="@+id/btnNext"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_next"
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Следующий"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="#000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnPlay"
+                app:layout_constraintTop_toTopOf="@id/btnPrevious" />
+
+            <!-- Кнопка Добавить в топ -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddToPlaylist"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="26dp"
+                android:backgroundTint="#000"
+                android:fontFamily="@font/sonkobold"
+                android:text="+ Добавить в топ"
+                android:textColor="#e9ecf1"
+                android:textSize="14sp"
+                app:cornerRadius="22dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnPlay" />
+
+            <!-- Блок громкости -->
+            <ImageView
+                android:id="@+id/ivVolumeDown"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_volume_down"
+                android:contentDescription="Тихо"
+                app:tint="#666680"
+                app:layout_constraintBottom_toBottomOf="@id/seekBarVolume"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/seekBarVolume" />
+
+            <SeekBar
+                android:id="@+id/seekBarVolume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progressTint="#000"
+                android:thumbTint="#000"
+                app:layout_constraintEnd_toStartOf="@id/ivVolumeUp"
+                app:layout_constraintStart_toEndOf="@id/ivVolumeDown"
+                app:layout_constraintTop_toBottomOf="@id/btnAddToPlaylist"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="20dp" />
+
+            <ImageView
+                android:id="@+id/ivVolumeUp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_volume_up"
+                android:contentDescription="Громко"
+                app:tint="#666680"
+                app:layout_constraintBottom_toBottomOf="@id/seekBarVolume"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/seekBarVolume" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

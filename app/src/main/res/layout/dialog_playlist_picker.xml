@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="#e9ecf1"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Заголовок -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Добавить в топ"
+                android:fontFamily="@font/sonkobold"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_close"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="Закрыть"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="#000"/>
+
+        </LinearLayout>
+
+        <!-- Разделитель -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1E1E2E"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Загрузка -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="#000"
+            android:visibility="gone"/>
+
+        <!-- Пустое состояние -->
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="У тебя пока нет топов.\nСначала создай топ на главном экране."
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#666680"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:paddingVertical="24dp"
+            android:visibility="gone"/>
+
+        <!-- Список плейлистов -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPlaylists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="400dp"
+            android:nestedScrollingEnabled="false"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
