@@ -39,11 +39,20 @@ public class PlaylistPickerAdapter
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(playlists.get(position));
+        Playlist playlist = playlists.get(position);
+        holder.bind(playlist);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onPlaylistClick(playlist);
+            }
+        });
     }
 
     @Override
-    public int getItemCount() { return playlists.size(); }
+    public int getItemCount() {
+        return playlists != null ? playlists.size() : 0;
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvTrackCount;
@@ -55,12 +64,9 @@ public class PlaylistPickerAdapter
         }
 
         void bind(Playlist playlist) {
-            tvTitle.setText(playlist.getTitle());
+            tvTitle.setText(playlist.getTitle() != null
+                    ? playlist.getTitle() : "Без названия");
             tvTrackCount.setText(playlist.getTrackCount() + " треков");
-
-            itemView.setOnClickListener(v -> {
-                if (listener != null) listener.onPlaylistClick(playlist);
-            });
         }
     }
 }

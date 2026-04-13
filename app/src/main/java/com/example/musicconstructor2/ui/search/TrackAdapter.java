@@ -1,6 +1,5 @@
 package com.example.musicconstructor2.ui.search;
 
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.musicconstructor2.R;
 import com.example.musicconstructor2.data.model.Track;
-import com.example.musicconstructor2.service.MusicPlayerServiceHolder;
-import com.example.musicconstructor2.ui.player.PlayerActivity;
+import com.example.musicconstructor2.ui.player.PlaylistPickerDialog;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -23,24 +21,29 @@ import java.util.List;
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHolder> {
 
     private List<Track> tracks = new ArrayList<>();
+    private final String userId;
 
     public interface OnTrackClickListener {
-        void onAddClick(Track track);
         void onPlayClick(Track track, int position);
     }
+
     private OnTrackClickListener listener;
 
-    public TrackAdapter(OnTrackClickListener listener) {
+    public TrackAdapter(String userId, OnTrackClickListener listener) {
+        this.userId = userId;
         this.listener = listener;
     }
 
     public void setTracks(List<Track> tracks) {
-        this.tracks = tracks;
+        this.tracks = tracks != null ? tracks : new ArrayList<>();
         notifyDataSetChanged();
     }
+
     public List<Track> getTracks() {
-        return tracks != null ? tracks : new ArrayList<>();
-    }    @NonNull
+        return tracks;
+    }
+
+    @NonNull
     @Override
     public TrackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -74,10 +77,11 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
         }
 
         void bind(Track track) {
-            tvTitle.setText(track.getTitle());
-            tvArtist.setText(track.getArtist());
+            tvTitle.setText(track.getTitle() != null ? track.getTitle() : "Без названия");
+            tvArtist.setText(track.getArtist() != null ? track.getArtist() : "Неизвестный исполнитель");
             tvDuration.setText(track.getFormattedDuration());
 
+            // Загрузка обложки
             if (track.getCoverUrl() != null && !track.getCoverUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(track.getCoverUrl())
@@ -88,16 +92,23 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
                 ivCover.setImageResource(R.drawable.ic_default_cover);
             }
 
-            // Кнопка + — добавить в топ
             btnAdd.setOnClickListener(v -> {
-                if (listener != null)
-                    listener.onAddClick(track);
+                // Создаем и показываем диалог выбора плейлиста
+                PlaylistPickerDialog dialog = new PlaylistPickerDialog(
+                        itemView.getContext(),
+                        track,
+                        userId
+                );
+                dialog.show();
             });
 
-            // Клик на элемент — открыть плеер через listener
             itemView.setOnClickListener(v -> {
-                if (listener != null)
-                    listener.onPlayClick(track, getAdapterPosition());
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onPlayClick(track, position);
+                    }
+                }
             });
         }
     }

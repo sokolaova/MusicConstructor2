@@ -9,60 +9,70 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:padding="12dp">
 
+        <!-- Обложка -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_cover"
-            app:shapeAppearanceOverlay="@style/RoundedCover"/>
+            app:shapeAppearanceOverlay="@style/RoundedCover"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <LinearLayout
+        <!-- Название трека -->
+        <TextView
+            android:id="@+id/tvTrackTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingHorizontal="12dp">
+            android:fontFamily="@font/sonkobold"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/ivCover"
+            app:layout_constraintEnd_toStartOf="@id/btnAddTrack"
+            app:layout_constraintTop_toTopOf="@id/ivCover"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"/>
 
-            <TextView
-                android:id="@+id/tvTrackTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sonkobold"
-                android:textColor="#000"
-                android:textSize="15sp"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+        <!-- Исполнитель -->
+        <TextView
+            android:id="@+id/tvArtist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#666680"
+            android:textSize="13sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/ivCover"
+            app:layout_constraintEnd_toStartOf="@id/btnAddTrack"
+            app:layout_constraintTop_toBottomOf="@id/tvTrackTitle"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="2dp"/>
 
-            <TextView
-                android:id="@+id/tvArtist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sonkoregular"
-                android:textColor="#666680"
-                android:textSize="13sp"
-                android:paddingTop="2dp"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+        <!-- Длительность -->
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#AAAACC"
+            android:textSize="11sp"
+            app:layout_constraintStart_toEndOf="@id/ivCover"
+            app:layout_constraintTop_toBottomOf="@id/tvArtist"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"/>
 
-            <TextView
-                android:id="@+id/tvDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sonkoregular"
-                android:textColor="#AAAACC"
-                android:textSize="11sp"
-                android:paddingTop="4dp"/>
-
-        </LinearLayout>
-
+        <!-- Кнопка добавления -->
         <ImageView
             android:id="@+id/btnAddTrack"
             android:layout_width="48dp"
@@ -73,8 +83,11 @@
             android:focusable="true"
             android:contentDescription="Добавить трек"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#000"/>
+            app:tint="#000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
