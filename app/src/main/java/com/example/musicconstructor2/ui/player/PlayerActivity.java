@@ -156,7 +156,6 @@ public class PlayerActivity extends AppCompatActivity
                             .getLong("user_id", 0)
             );
 
-            // ✅ Открываем диалог выбора плейлиста
             PlaylistPickerDialog dialog = new PlaylistPickerDialog(
                     PlayerActivity.this,
                     current,

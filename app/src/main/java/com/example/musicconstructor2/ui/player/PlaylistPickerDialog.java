@@ -129,7 +129,7 @@ public class PlaylistPickerDialog extends Dialog {
                 new PlaylistRepository.Callback<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        android.util.Log.d("PlaylistPicker", "✅ Трек успешно добавлен!");
+                        android.util.Log.d("PlaylistPicker", "Трек успешно добавлен!");
                         Toast.makeText(getContext(),
                                 "Добавлено в «" + playlist.getTitle() + "»",
                                 Toast.LENGTH_SHORT).show();
@@ -138,7 +138,7 @@ public class PlaylistPickerDialog extends Dialog {
 
                     @Override
                     public void onError(String error) {
-                        android.util.Log.e("PlaylistPicker", "❌ Ошибка добавления: " + error);
+                        android.util.Log.e("PlaylistPicker", "Ошибка добавления: " + error);
                         rvPlaylists.setEnabled(true);
                         Toast.makeText(getContext(),
                                 "Ошибка добавления: " + error,

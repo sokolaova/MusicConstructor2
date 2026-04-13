@@ -10,16 +10,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.example.musicconstructor2.ui.home.PlaylistViewActivity;
 import com.example.musicconstructor2.data.model.Playlist;
 import com.example.musicconstructor2.data.model.VkProfile;
 import com.example.musicconstructor2.data.repository.PlaylistRepository;
 import com.example.musicconstructor2.data.repository.VkNetworkRepository;
 import com.example.musicconstructor2.data.repository.VkNetworkRepositoryImpl;
+import com.example.musicconstructor2.ui.home.PlaylistAdapter;
 import com.example.musicconstructor2.ui.search.SearchActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView         rvPlaylists, rvRecentPlaylists;
     private BottomNavigationView bottomNav;
     private FirebaseAuth         mAuth;
+    private PlaylistAdapter playlistAdapter;
+    private PlaylistAdapter recentPlaylistAdapter;
 
     private String               userId;
     private String               vkToken;
@@ -73,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
         rvPlaylists.setLayoutManager(new LinearLayoutManager(this));
         rvRecentPlaylists.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        playlistAdapter = new PlaylistAdapter(playlist -> openPlaylist(playlist));
+        rvPlaylists.setAdapter(playlistAdapter);
+
+        recentPlaylistAdapter = new PlaylistAdapter(playlist -> openPlaylist(playlist));
+        rvRecentPlaylists.setAdapter(recentPlaylistAdapter);
+
         findViewById(R.id.ivAvatar).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this,
                     com.example.musicconstructor2.ui.profile.ProfileActivity.class);
@@ -82,7 +93,69 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnAdd).setOnClickListener(v -> showCreatePlaylistDialog());
     }
 
-    // Приветствие по времени суток
+    private void openPlaylist(Playlist playlist) {
+        Intent intent = new Intent(MainActivity.this, PlaylistViewActivity.class);
+        intent.putExtra("playlist_id", playlist.getId());
+        intent.putExtra("playlist_title", playlist.getTitle());
+        startActivity(intent);
+    }
+
+    // =========================================================
+    //  Загружаем все плейлисты пользователя
+    // =========================================================
+    private void loadPlaylists() {
+        repository.getPlaylists(new PlaylistRepository.Callback<List<Playlist>>() {
+            @Override
+            public void onSuccess(List<Playlist> playlists) {
+                if (!playlists.isEmpty()) {
+                    currentPlaylistId = playlists.get(0).getId();
+
+                    // ✅ Синхронизируем trackCount для всех плейлистов (без рекурсии)
+                    syncAllPlaylistCounts(playlists);
+                }
+
+                // Показываем все плейлисты в основном списке
+                playlistAdapter.setPlaylists(playlists);
+
+                // Показываем последние 3 плейлиста в горизонтальном списке
+                List<Playlist> recentPlaylists = new ArrayList<>();
+                for (int i = 0; i < Math.min(3, playlists.size()); i++) {
+                    recentPlaylists.add(playlists.get(i));
+                }
+                recentPlaylistAdapter.setPlaylists(recentPlaylists);
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(MainActivity.this,
+                        "Ошибка загрузки: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // =========================================================
+    //  Синхронизируем счётчики для всех плейлистов (без рекурсии)
+    // =========================================================
+    private void syncAllPlaylistCounts(List<Playlist> playlists) {
+        for (Playlist playlist : playlists) {
+            repository.syncPlaylistTrackCount(playlist.getId(),
+                    new PlaylistRepository.Callback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            // Успешно синхронизировано
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            // Ошибка синхронизации — не критично, используем существующие данные
+                        }
+                    });
+        }
+    }
+
+    // =========================================================
+    //  Приветствие по времени суток
+    // =========================================================
     private void setupGreeting() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String greeting;
@@ -93,7 +166,9 @@ public class MainActivity extends AppCompatActivity {
         tvGreeting.setText(greeting);
     }
 
-    // Загружаем имя и аватар из VK
+    // =========================================================
+    //  Загружаем имя и аватар из VK
+    // =========================================================
     private void loadUserProfile() {
         if (vkToken.isEmpty()) return;
 
@@ -101,8 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 new VkNetworkRepository.VkApiCallback<VkProfile>() {
                     @Override
                     public void onSuccess(VkProfile profile) {
-                        // Показываем имя пользователя
-                        tvUsername.setText(profile.getFirstName() + "'s топы");
+                        tvUsername.setText("Ваши топы:");
 
                         // Сохраняем имя для использования в других экранах
                         getSharedPreferences("vk_prefs", MODE_PRIVATE)
@@ -114,32 +188,14 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(String error) {
-                        // Имя не загрузилось — ставим дефолтное
                         tvUsername.setText("Твои топы");
                     }
                 });
     }
 
-    // Загружаем плейлисты из Firestore
-    private void loadPlaylists() {
-        repository.getPlaylists(new PlaylistRepository.Callback<List<Playlist>>() {
-            @Override
-            public void onSuccess(List<Playlist> playlists) {
-                if (!playlists.isEmpty()) {
-                    currentPlaylistId = playlists.get(0).getId();
-                }
-                // TODO: передать в адаптер когда будет готов PlaylistAdapter
-                // playlistAdapter.setPlaylists(playlists);
-            }
-
-            @Override
-            public void onError(String error) {
-                Toast.makeText(MainActivity.this,
-                        "Ошибка загрузки: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
+    // =========================================================
+    //  Диалог создания плейлиста
+    // =========================================================
     private void showCreatePlaylistDialog() {
         // Создаем кастомный диалог
         android.app.Dialog dialog = new android.app.Dialog(this);
@@ -165,6 +221,9 @@ public class MainActivity extends AppCompatActivity {
             if (!title.isEmpty()) {
                 createPlaylist(title);
                 dialog.dismiss();
+            } else {
+                Toast.makeText(MainActivity.this,
+                        "Введите название плейлиста", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -173,6 +232,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // =========================================================
+    //  Создание плейлиста с проверкой дубликатов
+    // =========================================================
     private void createPlaylist(String title) {
         Playlist playlist = new Playlist(title, "", userId);
         repository.createPlaylist(playlist, new PlaylistRepository.Callback<String>() {
@@ -192,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // =========================================================
+    //  Bottom Navigation
+    // =========================================================
     private void setupBottomNav() {
         bottomNav.setSelectedItemId(R.id.nav_home);
         bottomNav.setOnItemSelectedListener(item -> {
@@ -204,12 +269,12 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("vk_token", vkToken);
                 startActivity(intent);
                 return true;
-        } else if (id == R.id.nav_profile) {
-            Intent intent = new Intent(MainActivity.this,
-                    com.example.musicconstructor2.ui.profile.ProfileActivity.class);
-            startActivity(intent);
-            return true;
-        }
+            } else if (id == R.id.nav_profile) {
+                Intent intent = new Intent(MainActivity.this,
+                        com.example.musicconstructor2.ui.profile.ProfileActivity.class);
+                startActivity(intent);
+                return true;
+            }
             return false;
         });
     }

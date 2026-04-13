@@ -24,7 +24,6 @@ import com.example.musicconstructor2.data.repository.VkNetworkRepository;
 import com.example.musicconstructor2.data.repository.VkNetworkRepositoryImpl;
 import com.example.musicconstructor2.service.MusicPlayerServiceHolder;
 import com.example.musicconstructor2.ui.player.PlayerActivity;
-import com.example.musicconstructor2.ui.player.PlaylistPickerDialog;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -84,7 +83,6 @@ public class SearchActivity extends AppCompatActivity {
         layoutEmpty = findViewById(R.id.layoutEmpty);
         rvResults   = findViewById(R.id.rvSearchResults);
 
-        // ✅ Исправлено: правильное создание адаптера
         adapter = new TrackAdapter(userId, new TrackAdapter.OnTrackClickListener() {
             @Override
             public void onPlayClick(Track track, int position) {

@@ -97,6 +97,7 @@ public class MusicPlayerService extends Service {
     // =========================================================
     //  Воспроизведение текущего трека
     // =========================================================
+    // Исправленный метод playCurrentTrack() в MusicPlayerService.java (строки 100-152)
     private void playCurrentTrack() {
         if (playlist.isEmpty()) return;
 
@@ -107,12 +108,20 @@ public class MusicPlayerService extends Service {
             return;
         }
 
-        // Останавливаем предыдущий
+        // ✅ Останавливаем и полностью очищаем предыдущий MediaPlayer
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+                mediaPlayer.release();
+            } catch (Exception e) {
+                Log.e(TAG, "Error stopping previous player: " + e.getMessage());
+            }
             mediaPlayer = null;
         }
+
+        progressHandler.removeCallbacksAndMessages(null);
 
         isPrepared = false;
         if (listener != null) listener.onTrackChanged(track, currentIndex);
@@ -150,6 +159,7 @@ public class MusicPlayerService extends Service {
             if (listener != null) listener.onError(e.getMessage());
         }
     }
+
 
     // =========================================================
     //  Управление воспроизведением
