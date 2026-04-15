@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
     private void openPlaylist(Playlist playlist) {
         Intent intent = new Intent(MainActivity.this, PlaylistViewActivity.class);
         intent.putExtra("playlist_id", playlist.getId());
-        intent.putExtra("playlist_title", playlist.getTitle());
         startActivity(intent);
     }
 

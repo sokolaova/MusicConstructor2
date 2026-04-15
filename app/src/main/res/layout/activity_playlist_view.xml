@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:background="#F5F5F5">
 
-    <!-- Заголовок -->
+    <!-- Заголовок с опциями -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -37,6 +37,16 @@
             android:textSize="18sp"
             android:paddingStart="16dp"/>
 
+        <!-- Кнопка меню -->
+        <ImageView
+            android:id="@+id/btnMenu"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Меню"
+            android:scaleType="centerInside"
+            android:padding="4dp"/>
+
     </LinearLayout>
 
     <!-- Разделитель -->
@@ -45,53 +55,146 @@
         android:layout_height="1dp"
         android:background="#E0E0E0"/>
 
-    <!-- Контент с отступами -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/tvDescription"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:layout_height="wrap_content"
+        android:text=""
+        android:fontFamily="@font/sonkoregular"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:visibility="gone"/>
+
+    <!-- Блок редактирования описания плейлиста -->
+    <LinearLayout
+        android:id="@+id/layoutDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Описание"
+            android:fontFamily="@font/sonkobold"
+            android:textColor="#000"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="2"
+            android:maxLines="4"
+            android:hint="Добавьте описание плейлиста..."
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#000"
+            android:textColorHint="#AAAACC"
+            android:textSize="13sp"
+            android:background="@drawable/bg_edit_text"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancelDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Отмена"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <Button
+                android:id="@+id/btnSaveDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Разделитель после описания (если описание есть) -->
+    <View
+        android:id="@+id/dividerAfterDescription"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:visibility="gone"/>
+
+    <!-- Контент с отступами -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <!-- Загрузка -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
         <!-- Пустое состояние -->
         <TextView
             android:id="@+id/tvEmpty"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="В этом плейлисте нет треков"
             android:fontFamily="@font/sonkoregular"
             android:textColor="#888899"
             android:textSize="16sp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:padding="16dp"/>
 
-        <!-- Список треков -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTracks"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        <!-- Контейнер с фиксированными номерами и списком -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Фиксированная колонка с номерами мест -->
+            <LinearLayout
+                android:id="@+id/layoutPositions"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#FAFAFA"
+                android:padding="8dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPositions"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none"/>
+
+            </LinearLayout>
+
+            <!-- Список треков (перетаскиваемые) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTracks"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:padding="8dp"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

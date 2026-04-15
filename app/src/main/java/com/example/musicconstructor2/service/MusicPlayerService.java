@@ -89,7 +89,7 @@ public class MusicPlayerService extends Service {
 
         this.playlist     = new ArrayList<>(tracks);
         this.currentIndex = Math.max(0,
-                Math.min(startIndex, tracks.size() - 1)); // ✅ защита от выхода за пределы
+                Math.min(startIndex, tracks.size() - 1));
 
         playCurrentTrack();
     }
@@ -108,7 +108,6 @@ public class MusicPlayerService extends Service {
             return;
         }
 
-        // ✅ Останавливаем и полностью очищаем предыдущий MediaPlayer
         if (mediaPlayer != null) {
             try {
                 if (mediaPlayer.isPlaying()) {

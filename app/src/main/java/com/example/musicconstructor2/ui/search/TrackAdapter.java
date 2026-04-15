@@ -22,25 +22,24 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
 
     private List<Track> tracks = new ArrayList<>();
     private final String userId;
+    private OnTrackClickListener listener;
 
     public interface OnTrackClickListener {
         void onPlayClick(Track track, int position);
     }
 
-    private OnTrackClickListener listener;
-
     public TrackAdapter(String userId, OnTrackClickListener listener) {
-        this.userId = userId;
+        this.userId   = userId;
         this.listener = listener;
     }
 
     public void setTracks(List<Track> tracks) {
-        this.tracks = tracks != null ? tracks : new ArrayList<>();
+        this.tracks = tracks;
         notifyDataSetChanged();
     }
 
     public List<Track> getTracks() {
-        return tracks;
+        return tracks != null ? tracks : new ArrayList<>();
     }
 
     @NonNull
@@ -53,12 +52,12 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
 
     @Override
     public void onBindViewHolder(@NonNull TrackViewHolder holder, int position) {
-        holder.bind(tracks.get(position));
+        holder.bind(tracks.get(position), position);
     }
 
     @Override
     public int getItemCount() {
-        return tracks.size();
+        return tracks != null ? tracks.size() : 0;
     }
 
     class TrackViewHolder extends RecyclerView.ViewHolder {
@@ -76,12 +75,11 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
             btnAdd     = itemView.findViewById(R.id.btnAddTrack);
         }
 
-        void bind(Track track) {
-            tvTitle.setText(track.getTitle() != null ? track.getTitle() : "Без названия");
-            tvArtist.setText(track.getArtist() != null ? track.getArtist() : "Неизвестный исполнитель");
+        void bind(Track track, int position) {
+            tvTitle.setText(track.getTitle());
+            tvArtist.setText(track.getArtist());
             tvDuration.setText(track.getFormattedDuration());
 
-            // Загрузка обложки
             if (track.getCoverUrl() != null && !track.getCoverUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
                         .load(track.getCoverUrl())
@@ -92,23 +90,19 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackViewHol
                 ivCover.setImageResource(R.drawable.ic_default_cover);
             }
 
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onPlayClick(track, position);
+                }
+            });
+
             btnAdd.setOnClickListener(v -> {
-                // Создаем и показываем диалог выбора плейлиста
                 PlaylistPickerDialog dialog = new PlaylistPickerDialog(
                         itemView.getContext(),
                         track,
                         userId
                 );
                 dialog.show();
-            });
-
-            itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        listener.onPlayClick(track, position);
-                    }
-                }
             });
         }
     }

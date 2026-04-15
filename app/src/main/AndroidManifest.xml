@@ -16,9 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicConstructor2">
-        <activity
-            android:name=".ui.home.PlaylistViewActivity"
-            android:exported="false" />
+
         <activity
             android:name=".ui.player.PlayerActivity"
             android:exported="false" />
@@ -42,6 +40,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.home.PlaylistViewActivity"
+            android:exported="true">
+
+            <!-- Deep link фильтр -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="musicconstructor"
+                    android:host="playlist"
+                    android:pathPattern="/.*" />
+            </intent-filter>
+
         </activity>
         <activity
             android:name=".ui.auth.VkAuthActivity"
