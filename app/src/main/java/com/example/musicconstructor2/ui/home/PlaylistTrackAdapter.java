@@ -27,6 +27,7 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<PlaylistTrackAdap
 
     private List<Track> tracks = new ArrayList<>();
     private final String userId;
+    private boolean dragEnabled = true;
     private final String playlistId;
     private final PlaylistRepository repository;
     private OnTrackClickListener listener;
@@ -47,7 +48,12 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<PlaylistTrackAdap
         this.tracks = tracks != null ? new ArrayList<>(tracks) : new ArrayList<>();
         notifyDataSetChanged();
     }
-
+    public void setDragEnabled(boolean enabled) {
+        this.dragEnabled = enabled;
+    }
+    public boolean isDragEnabled() {
+        return dragEnabled;
+    }
     public List<Track> getTracks() {
         return new ArrayList<>(tracks);
     }
