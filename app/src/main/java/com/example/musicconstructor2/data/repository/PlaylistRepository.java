@@ -1,6 +1,7 @@
 package com.example.musicconstructor2.data.repository;
 
 import com.example.musicconstructor2.data.model.Playlist;
+import com.example.musicconstructor2.data.model.RatingInfo;
 import com.example.musicconstructor2.data.model.Track;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -415,6 +416,125 @@ public class PlaylistRepository {
                 .get()
                 .addOnSuccessListener(documentSnapshot ->
                         callback.onSuccess(documentSnapshot.exists()))
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+    //  РЕЙТИНГ ТРЕКОВ
+
+
+    public void getTrackRating(String trackId, Callback<RatingInfo> callback) {
+        // Получаем все оценки трека
+        db.collection("ratings")
+                .whereEqualTo("trackId", trackId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    RatingInfo ratingInfo = new RatingInfo();
+
+                    float totalRating = 0f;
+                    int ratingCount = snapshot.size();
+                    float userRating = 0f;
+                    boolean hasUserRated = false;
+
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        Long rating = doc.getLong("rating");
+                        String raterId = doc.getString("userId");
+
+                        if (rating != null) {
+                            totalRating += rating;
+
+                            // Проверяем, оценил ли текущий пользователь
+                            if (userId.equals(raterId)) {
+                                userRating = rating;
+                                hasUserRated = true;
+                            }
+                        }
+                    }
+
+                    if (ratingCount > 0) {
+                        ratingInfo.setAverageRating(totalRating / ratingCount);
+                    }
+                    ratingInfo.setTotalRatings(ratingCount);
+                    ratingInfo.setUserRating(userRating);
+                    ratingInfo.setHasUserRated(hasUserRated);
+
+                    callback.onSuccess(ratingInfo);
+                })
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
+    public void rateTrack(String trackId, float rating, Callback<Void> callback) {
+        if (rating < 0 || rating > 10) {
+            callback.onError("Оценка должна быть от 0 до 10");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("trackId", trackId);
+        data.put("userId", userId);
+        data.put("rating", rating);
+        data.put("timestamp", System.currentTimeMillis());
+
+        // Используем составной ID для документа
+        String ratingId = userId + "_" + trackId;
+
+        db.collection("ratings")
+                .document(ratingId)
+                .set(data)
+                .addOnSuccessListener(unused -> {
+                    // После сохранения оценки обновляем средний рейтинг в треке
+                    updateTrackAverageRating(trackId, null);
+                    callback.onSuccess(null);
+                })
+                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+    }
+
+    private void updateTrackAverageRating(String trackId, Callback<Void> callback) {
+        db.collection("ratings")
+                .whereEqualTo("trackId", trackId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    float totalRating = 0f;
+                    int ratingCount = snapshot.size();
+
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        Long rating = doc.getLong("rating");
+                        if (rating != null) {
+                            totalRating += rating;
+                        }
+                    }
+
+                    float averageRating = ratingCount > 0 ? totalRating / ratingCount : 0f;
+
+                    // Обновляем информацию в документе трека (если трек сохранён в БД)
+                    // Это нужно для быстрого отображения рейтинга в списках
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("averageRating", averageRating);
+                    updates.put("totalRatings", ratingCount);
+
+                    // Опционально: сохраняем в документ трека
+                    db.collection("tracks_metadata")
+                            .document(trackId)
+                            .set(updates, com.google.firebase.firestore.SetOptions.merge())
+                            .addOnSuccessListener(unused -> {
+                                if (callback != null) callback.onSuccess(null);
+                            })
+                            .addOnFailureListener(e -> {
+                                if (callback != null) callback.onError(e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) callback.onError(e.getMessage());
+                });
+    }
+
+    public void removeTrackRating(String trackId, Callback<Void> callback) {
+        String ratingId = userId + "_" + trackId;
+
+        db.collection("ratings")
+                .document(ratingId)
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    updateTrackAverageRating(trackId, callback);
+                })
                 .addOnFailureListener(e -> callback.onError(e.getMessage()));
     }
 }
