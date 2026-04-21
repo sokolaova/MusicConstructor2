@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -73,10 +74,19 @@ public class PlaylistViewActivity extends AppCompatActivity {
         );
 
         repository = new PlaylistRepository(userId);
+        playlistId = getIntent().getStringExtra("playlist_id");
+        playlistTitle = getIntent().getStringExtra("playlist_title");
+        playlistDescription = getIntent().getStringExtra("playlist_description");
+
+        android.util.Log.d("PlaylistView", "onCreate: playlistId=" + playlistId);
+
+        if (playlistId == null || playlistId.isEmpty()) {
+            Toast.makeText(this, "Ошибка: плейлист не найден", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         initViews();
-
-        // Проверяем Deep Link
         if (!handleDeepLink()) {
             // Получаем ID плейлиста из Intent
             playlistId = getIntent().getStringExtra("playlist_id");
@@ -118,12 +128,29 @@ public class PlaylistViewActivity extends AppCompatActivity {
         // Создаём адаптер для треков
         trackAdapter = new PlaylistTrackAdapter(userId, playlistId, repository,
                 (track, position) -> {
+                    List<Track> tracksToPlay = new ArrayList<>();
+                    for (Track t : trackAdapter.getTracks()) {
+                        if (t.getId() != null && !t.getId().isEmpty()) {
+                            tracksToPlay.add(t);
+                        }
+                    }
                     MusicPlayerServiceHolder.tracks = new ArrayList<>(trackAdapter.getTracks());
                     MusicPlayerServiceHolder.startIndex = position;
                     startActivity(new Intent(this, PlayerActivity.class));
                 });
         rvTracks.setAdapter(trackAdapter);
+        rvTracks.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                // Синхронизируем прокрутку rvPositions с rvTracks
+                rvPositions.scrollBy(dx, dy);
+            }
+        });
 
+        // Отключаем вложенную прокрутку у обоих списков
+        rvTracks.setNestedScrollingEnabled(false);
+        rvPositions.setNestedScrollingEnabled(false);
         // Drag and Drop для переупорядочивания треков
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(
@@ -322,7 +349,9 @@ public class PlaylistViewActivity extends AppCompatActivity {
                 });
                 break;
         }
-
+        for (int i = 0; i < sortedTracks.size(); i++) {
+            sortedTracks.get(i).setPosition(i);
+        }
         trackAdapter.setTracks(sortedTracks);
         positionAdapter.setTrackCount(sortedTracks.size());
     }

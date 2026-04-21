@@ -68,14 +68,26 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<PlaylistTrackAdap
                 Collections.swap(tracks, i, i - 1);
             }
         }
+        if (playlistId == null || playlistId.isEmpty()) {
+            android.util.Log.e("PlaylistTrackAdapter", "playlistId is null!");
+            return;
+        }
+
+        for (Track track : tracks) {
+            if (track.getId() == null || track.getId().isEmpty()) {
+                android.util.Log.e("PlaylistTrackAdapter", "Track id is null for: " + track.getTitle());
+                return;
+            }
+        }
         notifyItemMoved(fromPosition, toPosition);
         updateTracksPositions();
     }
 
     private void updateTracksPositions() {
         for (int i = 0; i < tracks.size(); i++) {
-            tracks.get(i).setPosition(i + 1);
+            tracks.get(i).setPosition(i);
         }
+        android.util.Log.d("PlaylistTrackAdapter", "updateTracksPositions: playlistId=" + playlistId);
         repository.updateTracksOrder(playlistId, tracks,
                 new PlaylistRepository.Callback<Void>() {
                     @Override

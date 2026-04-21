@@ -295,11 +295,23 @@ public class PlaylistRepository {
     //  Обновить порядок треков после drag-and-drop
     // =========================================================
     public void updateTracksOrder(String playlistId, List<Track> tracks, Callback<Void> callback) {
-        if (tracks == null || tracks.isEmpty()) {
-            callback.onSuccess(null);
+        if (playlistId == null || playlistId.isEmpty()) {
+            callback.onError("playlistId is null or empty");
             return;
         }
 
+        if (tracks == null || tracks.isEmpty()) {
+            callback.onError("tracks list is null or empty");
+            return;
+        }
+        for (Track track : tracks) {
+            if (track.getId() == null || track.getId().isEmpty()) {
+                callback.onError("Track id is null for: " + track.getTitle());
+                return;
+            }
+        }
+
+        android.util.Log.d("PlaylistRepo", "updateTracksOrder: playlistId=" + playlistId + ", tracks count=" + tracks.size());
         com.google.firebase.firestore.WriteBatch batch = db.batch();
 
         for (int i = 0; i < tracks.size(); i++) {
