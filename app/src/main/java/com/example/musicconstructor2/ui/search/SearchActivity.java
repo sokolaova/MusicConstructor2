@@ -42,6 +42,7 @@ public class SearchActivity extends AppCompatActivity {
     private PlaylistRepository   repository;
     private String               playlistId;
     private String               vkToken;
+    private String               userId;
 
     // Все треки пользователя — ищем локально по ним
     private List<Track> allTracks = new ArrayList<>();
@@ -65,7 +66,7 @@ public class SearchActivity extends AppCompatActivity {
                     .getString("access_token", "");
         }
 
-        String userId = String.valueOf(
+        userId = String.valueOf(
                 getSharedPreferences("vk_prefs", MODE_PRIVATE)
                         .getLong("user_id", 0));
 
@@ -82,23 +83,20 @@ public class SearchActivity extends AppCompatActivity {
         layoutEmpty = findViewById(R.id.layoutEmpty);
         rvResults   = findViewById(R.id.rvSearchResults);
 
-        // ✅ Сначала создаём адаптер
-        adapter = new TrackAdapter(new TrackAdapter.OnTrackClickListener() {
-            @Override
-            public void onAddClick(Track track) {
-                addTrackToPlaylist(track);
-            }
-
+        adapter = new TrackAdapter(userId, new TrackAdapter.OnTrackClickListener() {
             @Override
             public void onPlayClick(Track track, int position) {
-                MusicPlayerServiceHolder.tracks     = new ArrayList<>(adapter.getTracks());
+                // Воспроизведение трека
+                MusicPlayerServiceHolder.tracks = new ArrayList<>(adapter.getTracks());
                 MusicPlayerServiceHolder.startIndex = position;
                 Intent intent = new Intent(SearchActivity.this, PlayerActivity.class);
+                intent.putExtra("playlist_id", playlistId);
+                intent.putExtra("vk_token", vkToken);
                 startActivity(intent);
             }
         });
 
-        // ✅ Потом привязываем к RecyclerView
+        // Привязываем к RecyclerView
         rvResults.setLayoutManager(new LinearLayoutManager(this));
         rvResults.setAdapter(adapter);
 
@@ -112,8 +110,7 @@ public class SearchActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
                 Intent intent = new Intent(SearchActivity.this, MainActivity.class);
-                intent.setFlags(
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 finish();
                 return true;
@@ -226,34 +223,6 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             showResults(filtered);
         }
-    }
-
-    // =========================================================
-    //  Добавляем трек в плейлист Firestore
-    // =========================================================
-    private void addTrackToPlaylist(Track track) {
-        if (playlistId == null || playlistId.isEmpty()) {
-            Toast.makeText(this,
-                    "Сначала создай топ на главном экране",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        repository.addTrackToPlaylist(playlistId, track,
-                new PlaylistRepository.Callback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        Toast.makeText(SearchActivity.this,
-                                "✓ " + track.getArtist() + " — " + track.getTitle(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Toast.makeText(SearchActivity.this,
-                                "Ошибка: " + error, Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     // =========================================================

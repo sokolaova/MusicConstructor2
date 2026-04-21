@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
+
+    <!-- Заголовок с опциями -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#FFFFFF">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Назад"
+            android:scaleType="centerInside"/>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Плейлист"
+            android:fontFamily="@font/sonkobold"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:paddingStart="16dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <!-- Кнопка сортировки -->
+        <ImageView
+            android:id="@+id/btnSort"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_sort"
+            android:contentDescription="Сортировка"
+            android:scaleType="centerInside"
+            android:padding="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginEnd="4dp"/>
+
+        <!-- Кнопка меню -->
+        <ImageView
+            android:id="@+id/btnMenu"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Меню"
+            android:scaleType="centerInside"
+            android:padding="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+    </LinearLayout>
+
+    <!-- Разделитель -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"/>
+
+    <!-- ✅ Блок редактирования описания плейлиста -->
+    <LinearLayout
+        android:id="@+id/layoutDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Описание"
+            android:fontFamily="@font/sonkobold"
+            android:textColor="#000"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="2"
+            android:maxLines="4"
+            android:hint="Добавьте описание плейлиста..."
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#000"
+            android:textColorHint="#AAAACC"
+            android:textSize="13sp"
+            android:background="@drawable/bg_edit_text"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"
+            android:inputType="textMultiLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/btnCancelDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Отмена"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:fontFamily="@font/sonkobold"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_button_rounded"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
+                android:id="@+id/btnSaveDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/sonkobold"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp"
+                android:background="@drawable/bg_button_primary_rounded"
+                android:clickable="true"
+                android:focusable="true"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Отображение сохраненного описания -->
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:fontFamily="@font/sonkoregular"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:visibility="gone"/>
+
+    <!-- Разделитель после описания -->
+    <View
+        android:id="@+id/dividerAfterDescription"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
+        android:visibility="gone"/>
+
+    <!-- Индикатор текущей сортировки -->
+    <LinearLayout
+        android:id="@+id/layoutSortIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:background="#FAFAFA"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_sort"
+            app:tint="#666666"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/tvSortMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Личная расстановка"
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#666666"
+            android:textSize="13sp"/>
+
+        <ImageView
+            android:id="@+id/btnClearSort"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_close"
+            android:padding="4dp"
+            android:contentDescription="Сбросить сортировку"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#999999"/>
+
+    </LinearLayout>
+
+    <!-- Контент -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Загрузка -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <!-- Пустое состояние -->
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="В этом плейлисте нет треков"
+            android:fontFamily="@font/sonkoregular"
+            android:textColor="#888899"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:padding="16dp"/>
+
+        <!-- Контейнер с фиксированными номерами и списком -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <!-- Фиксированная колонка с номерами мест -->
+            <LinearLayout
+                android:id="@+id/layoutPositions"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#FAFAFA"
+                android:padding="8dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPositions"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none"/>
+
+            </LinearLayout>
+
+            <!-- Список треков -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTracks"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clipToPadding="false"
+                android:padding="8dp"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

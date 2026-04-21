@@ -57,6 +57,7 @@
             android:paddingBottom="24dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp">
+
             <!-- Обложка -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivCover"
@@ -68,8 +69,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.83"
-                android:layout_marginTop="26dp"
+                app:layout_constraintWidth_percent="0.8"
+                android:layout_marginTop="12dp"
                 app:shapeAppearanceOverlay="@style/RoundedCover"
                 app:strokeWidth="1dp"
                 app:strokeColor="#DDD" />
@@ -82,11 +83,11 @@
                 android:text="Название трека"
                 android:fontFamily="@font/sonkobold"
                 android:textColor="#000"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:gravity="center"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ivCover" />
@@ -106,12 +107,120 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+            <!-- ⭐⭐⭐ БЛОК РЕЙТИНГА С 10 ЗВЁЗДАМИ ⭐⭐⭐ -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnPlay">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+
+                    <!-- Заголовок блока -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="РЕЙТИНГ ТРЕКА"
+                        android:fontFamily="@font/sonkobold"
+                        android:textColor="#000"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="10dp" />
+
+                    <!-- Средняя оценка -->
+                    <TextView
+                        android:id="@+id/tvAverageRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0"
+                        android:fontFamily="@font/sonkobold"
+                        android:textColor="#000"
+                        android:textSize="32sp" />
+
+                    <!-- 10 звёзд для отображения среднего рейтинга -->
+                    <LinearLayout
+                        android:id="@+id/layoutRatingStars"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <!-- Количество оценок -->
+                    <TextView
+                        android:id="@+id/tvRatingCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 оценок"
+                        android:fontFamily="@font/sonkoregular"
+                        android:textColor="#888899"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="6dp" />
+
+                    <!-- Разделитель -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginVertical="10dp" />
+
+                    <!-- Текст "Ваша оценка" -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ВАША ОЦЕНКА"
+                        android:fontFamily="@font/sonkobold"
+                        android:textColor="#666680"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- 10 интерактивных звёзд для голосования -->
+                    <LinearLayout
+                        android:id="@+id/layoutVotingStars"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+
+                    <!-- Текущая оценка пользователя -->
+                    <TextView
+                        android:id="@+id/tvUserRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Нажмите на звёзды"
+                        android:fontFamily="@font/sonkoregular"
+                        android:textColor="#888899"
+                        android:textSize="13sp"
+                        android:layout_marginTop="8dp" />
+
+                    <!-- Подсказка о сбросе -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(долгое нажатие — сбросить)"
+                        android:fontFamily="@font/sonkoregular"
+                        android:textColor="#AAAACC"
+                        android:textSize="11sp"
+                        android:layout_marginTop="4dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- SeekBar Прогресса -->
             <SeekBar
                 android:id="@+id/seekBarProgress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="14dp"
                 android:progressTint="#000"
                 android:thumbTint="#000"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -143,6 +252,7 @@
                 app:layout_constraintEnd_toEndOf="@id/seekBarProgress"
                 app:layout_constraintTop_toBottomOf="@id/seekBarProgress"
                 android:layout_marginTop="4dp" />
+
             <!-- Кнопки управления -->
             <ImageView
                 android:id="@+id/btnPrevious"
@@ -159,14 +269,14 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvCurrentTime"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="1dp" />
 
             <ImageView
                 android:id="@+id/btnPlay"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="46dp"
+                android:layout_marginTop="32dp"
                 android:background="@drawable/bg_play_button"
                 android:clickable="true"
                 android:contentDescription="Воспроизвести"
@@ -198,7 +308,7 @@
                 android:id="@+id/btnAddToPlaylist"
                 android:layout_width="220dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="26dp"
+                android:layout_marginTop="20dp"
                 android:backgroundTint="#000"
                 android:fontFamily="@font/sonkobold"
                 android:text="+ Добавить в топ"
@@ -207,7 +317,7 @@
                 app:cornerRadius="22dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnPlay" />
+                app:layout_constraintTop_toBottomOf="@id/cardRating" />
 
             <!-- Блок громкости -->
             <ImageView
@@ -244,6 +354,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/seekBarVolume"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/seekBarVolume" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

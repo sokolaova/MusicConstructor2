@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="8dp">
+
+        <!-- Заголовок -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Сортировка"
+            android:fontFamily="@font/sonkobold"
+            android:textColor="#000"
+            android:textSize="16sp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"/>
+
+        <!-- Разделитель -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"/>
+
+        <!-- Личная расстановка -->
+        <LinearLayout
+            android:id="@+id/layoutSortCustom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/list_ic"
+                app:tint="#666666"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Личная расстановка"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#000"
+                android:textSize="15sp"
+                android:paddingStart="12dp"/>
+
+            <ImageView
+                android:id="@+id/ivCheckCustom"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_check"
+                app:tint="#0077FF"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- По моей оценке -->
+        <LinearLayout
+            android:id="@+id/layoutSortUserRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_star_filled"
+                app:tint="#FFD700"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="По моей оценке"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#000"
+                android:textSize="15sp"
+                android:paddingStart="12dp"/>
+
+            <ImageView
+                android:id="@+id/ivCheckUserRating"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_check"
+                app:tint="#0077FF"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- По среднему рейтингу -->
+        <LinearLayout
+            android:id="@+id/layoutSortAverageRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_star_half"
+                app:tint="#FFD700"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="По среднему рейтингу"
+                android:fontFamily="@font/sonkoregular"
+                android:textColor="#000"
+                android:textSize="15sp"
+                android:paddingStart="12dp"/>
+
+            <ImageView
+                android:id="@+id/ivCheckAverageRating"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_check"
+                app:tint="#0077FF"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
