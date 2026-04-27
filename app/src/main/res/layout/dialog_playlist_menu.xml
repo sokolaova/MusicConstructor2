@@ -44,35 +44,6 @@
 
         </LinearLayout>
 
-        <!-- Скопировать ссылку -->
-        <LinearLayout
-            android:id="@+id/layoutCopyLink"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="12dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_copy"
-                app:tint="#666666"/>
-
-            <TextView
-                android:id="@+id/tvCopyLink"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/sonkolight"
-                android:text="Скопировать ссылку"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:paddingStart="12dp"/>
-
-        </LinearLayout>
 
         <!-- Разделитель -->
         <View
