@@ -8,24 +8,6 @@ android:layout_height="match_parent"
 android:background="#e9ecf1"
     android:fitsSystemWindows="true">
 
-<!-- Блобы как в MainActivity -->
-<View
-    android:layout_width="300dp"
-    android:layout_height="300dp"
-    android:layout_gravity="top|end"
-    android:layout_marginTop="-50dp"
-    android:layout_marginEnd="-80dp"
-    android:background="@drawable/bg_blob_purple"
-    android:alpha="0.15"/>
-
-<View
-    android:layout_width="200dp"
-    android:layout_height="200dp"
-    android:layout_gravity="top|start"
-    android:layout_marginTop="200dp"
-    android:layout_marginStart="-60dp"
-    android:background="@drawable/bg_blob_blue"
-    android:alpha="0.1"/>
 
 <!-- AppBar -->
 <com.google.android.material.appbar.AppBarLayout

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="6dp"
     app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="8dp">
 
         <!-- Обложка -->
         <com.google.android.material.imageview.ShapeableImageView
