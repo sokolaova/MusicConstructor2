@@ -5,18 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.musicconstructor2.R;
 import com.example.musicconstructor2.data.model.Track;
 import com.example.musicconstructor2.data.repository.PlaylistRepository;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -27,85 +23,81 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<PlaylistTrackAdap
 
     private List<Track> tracks = new ArrayList<>();
     private final String userId;
-    private boolean dragEnabled = true;
     private final String playlistId;
     private final PlaylistRepository repository;
-    private OnTrackClickListener listener;
+    private final OnTrackClickListener listener;
+    private final OnTrackRemoveListener removeListener;
 
     public interface OnTrackClickListener {
-        void onPlayClick(Track track, int position);
+        void onTrackClick(Track track, int position);
     }
 
-    public PlaylistTrackAdapter(String userId, String playlistId, PlaylistRepository repository,
-                                OnTrackClickListener listener) {
+    public interface OnTrackRemoveListener {
+        void onTrackRemoved(int position);
+    }
+
+    public PlaylistTrackAdapter(String userId, String playlistId,
+                                PlaylistRepository repository,
+                                OnTrackClickListener listener,
+                                OnTrackRemoveListener removeListener) {
         this.userId = userId;
         this.playlistId = playlistId;
         this.repository = repository;
         this.listener = listener;
+        this.removeListener = removeListener;
     }
 
     public void setTracks(List<Track> tracks) {
-        this.tracks = tracks != null ? new ArrayList<>(tracks) : new ArrayList<>();
+        this.tracks = tracks != null ? tracks : new ArrayList<>();
         notifyDataSetChanged();
     }
-    public void setDragEnabled(boolean enabled) {
-        this.dragEnabled = enabled;
-    }
-    public boolean isDragEnabled() {
-        return dragEnabled;
-    }
+
     public List<Track> getTracks() {
-        return new ArrayList<>(tracks);
+        return tracks;
     }
 
     public void moveTrack(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(tracks, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(tracks, i, i - 1);
-            }
+        if (fromPosition < 0 || fromPosition >= tracks.size() ||
+                toPosition < 0 || toPosition >= tracks.size()) {
+            return;
         }
+
+        Collections.swap(tracks, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+
+        if (playlistId != null && !playlistId.isEmpty()) {
+            updateTracksPositions();
+        }
+    }
+
+    public void updateTracksPositions() {
+        for (int i = 0; i < tracks.size(); i++) {
+            tracks.get(i).setPosition(i);
+        }
+
         if (playlistId == null || playlistId.isEmpty()) {
-            android.util.Log.e("PlaylistTrackAdapter", "playlistId is null!");
             return;
         }
 
         for (Track track : tracks) {
             if (track.getId() == null || track.getId().isEmpty()) {
-                android.util.Log.e("PlaylistTrackAdapter", "Track id is null for: " + track.getTitle());
                 return;
             }
         }
-        notifyItemMoved(fromPosition, toPosition);
-        updateTracksPositions();
-    }
 
-    private void updateTracksPositions() {
-        for (int i = 0; i < tracks.size(); i++) {
-            tracks.get(i).setPosition(i);
-        }
-        android.util.Log.d("PlaylistTrackAdapter", "updateTracksPositions: playlistId=" + playlistId);
-        repository.updateTracksOrder(playlistId, tracks,
-                new PlaylistRepository.Callback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        // Успешно обновлены позиции
-                    }
+        repository.updateTracksOrder(playlistId, tracks, new PlaylistRepository.Callback<Void>() {
+            @Override
+            public void onSuccess(Void result) {}
 
-                    @Override
-                    public void onError(String error) {
-                        Toast.makeText(null, "Ошибка сохранения порядка: " + error,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onError(String error) {}
+        });
     }
 
     @NonNull
     @Override
     public TrackViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // ✅ Правильное имя файла разметки
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_track_in_playlist, parent, false);
         return new TrackViewHolder(view);
@@ -122,75 +114,128 @@ public class PlaylistTrackAdapter extends RecyclerView.Adapter<PlaylistTrackAdap
     }
 
     class TrackViewHolder extends RecyclerView.ViewHolder {
-
         ShapeableImageView ivCover;
         TextView tvTitle, tvArtist, tvDuration;
-        ImageView btnMenu;
-        CardView cardTrack;
+        ImageView btnRemove;
 
         TrackViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivCover    = itemView.findViewById(R.id.ivCover);
-            tvTitle    = itemView.findViewById(R.id.tvTrackTitle);
-            tvArtist   = itemView.findViewById(R.id.tvArtist);
+            ivCover = itemView.findViewById(R.id.ivCover);
+            tvTitle = itemView.findViewById(R.id.tvTrackTitle);
+            tvArtist = itemView.findViewById(R.id.tvArtist);
             tvDuration = itemView.findViewById(R.id.tvDuration);
-            btnMenu    = itemView.findViewById(R.id.btnMenu);
-            cardTrack  = itemView.findViewById(R.id.cardTrack);
+            btnRemove = itemView.findViewById(R.id.btnRemoveTrack);
         }
 
         void bind(Track track, int position) {
-            tvTitle.setText(track.getTitle() != null ? track.getTitle() : "Без названия");
-            tvArtist.setText(track.getArtist() != null ? track.getArtist() : "Неизвестный исполнитель");
-            tvDuration.setText(track.getFormattedDuration());
-
-            // Загрузка обложки
-            if (track.getCoverUrl() != null && !track.getCoverUrl().isEmpty()) {
-                Glide.with(itemView.getContext())
-                        .load(track.getCoverUrl())
-                        .placeholder(R.drawable.ic_default_cover)
-                        .error(R.drawable.ic_default_cover)
-                        .into(ivCover);
-            } else {
-                ivCover.setImageResource(R.drawable.ic_default_cover);
+            // ✅ Устанавливаем реальные данные трека
+            if (tvTitle != null) {
+                tvTitle.setText(track.getTitle() != null ? track.getTitle() : "Без названия");
+            }
+            if (tvArtist != null) {
+                tvArtist.setText(track.getArtist() != null ? track.getArtist() : "Неизвестный исполнитель");
+            }
+            if (tvDuration != null) {
+                tvDuration.setText(track.getFormattedDuration());
             }
 
-            // Клик по карточке - воспроизведение
-            cardTrack.setOnClickListener(v -> {
+            // ✅ Загружаем обложку трека
+            if (ivCover != null) {
+                if (track.getCoverUrl() != null && !track.getCoverUrl().isEmpty()) {
+                    Glide.with(itemView.getContext())
+                            .load(track.getCoverUrl())
+                            .placeholder(R.drawable.ic_default_cover)
+                            .error(R.drawable.ic_default_cover)
+                            .into(ivCover);
+                } else {
+                    ivCover.setImageResource(R.drawable.ic_default_cover);
+                }
+            }
+
+            // Клик по элементу
+            itemView.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onPlayClick(track, position);
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        listener.onTrackClick(tracks.get(pos), pos);
+                    }
                 }
             });
 
-            // Клик на кнопку удаления
-            btnMenu.setOnClickListener(v -> {
-                // Подтверждение удаления
-                new MaterialAlertDialogBuilder(itemView.getContext(), R.style.RoundedDialog)
-                        .setTitle("Удалить трек?")
-                        .setMessage("Трек будет удален из плейлиста")
-                        .setPositiveButton("Удалить", (dialog, which) -> removeTrack(track.getId(), position))
-                        .setNegativeButton("Отмена", null)
-                        .show();
-            });
+            // Кнопка удаления
+            if (btnRemove != null) {
+                btnRemove.setOnClickListener(v -> {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        showDeleteDialog(pos);
+                    }
+                });
+            }
         }
 
-        private void removeTrack(String trackId, int position) {
-            repository.removeTrack(playlistId, trackId,
-                    new PlaylistRepository.Callback<Void>() {
-                        @Override
-                        public void onSuccess(Void result) {
-                            tracks.remove(position);
-                            notifyItemRemoved(position);
-                            updateTracksPositions();
-                            Toast.makeText(itemView.getContext(),
-                                    "Трек удалён из плейлиста", Toast.LENGTH_SHORT).show();
-                        }
+        private void showDeleteDialog(int position) {
+            Track track = tracks.get(position);
 
-                        @Override
-                        public void onError(String error) {
-                            Toast.makeText(itemView.getContext(),
-                                    "Ошибка: " + error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            // Создаём кастомный диалог
+            android.app.Dialog dialog = new android.app.Dialog(itemView.getContext());
+            dialog.setContentView(R.layout.dialog_confirm_remove_track);
+
+            // Настраиваем размеры и прозрачный фон
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+                dialog.getWindow().setLayout(
+                        (int) (itemView.getContext().getResources().getDisplayMetrics().widthPixels * 0.85),
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+            }
+
+
+            // Находим элементы
+            TextView tvTitle = dialog.findViewById(R.id.tvDialogTitle);
+            TextView tvMessage = dialog.findViewById(R.id.tvDialogMessage);
+            TextView btnCancel = dialog.findViewById(R.id.btnCancel);
+            TextView btnRemove = dialog.findViewById(R.id.btnRemove);
+
+
+            // Обновляем сообщение с названием трека
+            tvMessage.setText("Трек «" + track.getTitle() + "» будет удалён из этого плейлиста.");
+
+            // Обработчики
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+            btnRemove.setOnClickListener(v -> {
+                dialog.dismiss();
+
+                // Удаляем из Firestore
+                if (playlistId != null && track.getId() != null) {
+                    repository.removeTrack(playlistId, track.getId(),
+                            new PlaylistRepository.Callback<Void>() {
+                                @Override
+                                public void onSuccess(Void result) {
+                                    android.util.Log.d("PlaylistTrackAdapter", "Трек удалён из Firestore");
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    android.util.Log.e("PlaylistTrackAdapter", "Ошибка удаления: " + error);
+                                }
+                            });
+                }
+
+                // Удаляем из локального списка
+                tracks.remove(position);
+                notifyItemRemoved(position);
+
+                // Обновляем позиции
+                updateTracksPositions();
+
+                // Уведомляем Activity
+                if (removeListener != null) {
+                    removeListener.onTrackRemoved(position);
+                }
+            });
+
+            dialog.show();
         }
     }
 }

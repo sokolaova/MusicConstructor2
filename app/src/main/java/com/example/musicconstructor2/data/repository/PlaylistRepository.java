@@ -338,7 +338,17 @@ public class PlaylistRepository {
     //  Удалить трек из плейлиста с уменьшением счётчика
     // =========================================================
     public void removeTrack(String playlistId, String trackId, Callback<Void> callback) {
-        // Используем батч для атомарности
+        if (playlistId == null || playlistId.isEmpty()) {
+            callback.onError("playlistId is null or empty");
+            return;
+        }
+        if (trackId == null || trackId.isEmpty()) {
+            callback.onError("trackId is null or empty");
+            return;
+        }
+
+        android.util.Log.d("PlaylistRepo", "removeTrack: playlistId=" + playlistId + ", trackId=" + trackId);
+
         com.google.firebase.firestore.WriteBatch batch = db.batch();
 
         // 1. Удаляем трек из подколлекции
@@ -362,12 +372,14 @@ public class PlaylistRepository {
 
         batch.commit()
                 .addOnSuccessListener(unused -> {
-                    // Синхронизируем счетчик для уверенности
+                    android.util.Log.d("PlaylistRepo", "Трек успешно удалён");
                     syncPlaylistTrackCount(playlistId, null);
                     callback.onSuccess(null);
                 })
-                .addOnFailureListener(e -> callback.onError(e.getMessage()));
-    }
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("PlaylistRepo", "Ошибка удаления трека: " + e.getMessage());
+                    callback.onError(e.getMessage());
+                });}
 
     // =========================================================
     //  Обновить описание плейлиста

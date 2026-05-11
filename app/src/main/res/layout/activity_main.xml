@@ -10,24 +10,6 @@
 
     android:fitsSystemWindows="true">
 
-        <!-- Фоновые блобы -->
-        <View
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_gravity="top|end"
-            android:layout_marginTop="-50dp"
-            android:layout_marginEnd="-80dp"
-            android:background="@drawable/bg_blob_purple"
-            android:alpha="0.15"/>
-
-        <View
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="top|start"
-            android:layout_marginTop="200dp"
-            android:layout_marginStart="-60dp"
-            android:background="@drawable/bg_blob_blue"
-            android:alpha="0.1"/>
 
         <!-- AppBar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -167,19 +149,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Мои топы"
+                        android:text="Все топы"
                         android:fontFamily="@font/sonkoregular"
                         android:textColor="#000"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
 
-                    <TextView
-                        android:id="@+id/tvSeeAll"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Все →"
-                        android:textColor="@color/vk_dark_blue"
-                        android:textSize="14sp"/>
 
                 </LinearLayout>
 

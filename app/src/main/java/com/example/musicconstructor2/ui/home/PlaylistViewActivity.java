@@ -1,8 +1,5 @@
 package com.example.musicconstructor2.ui.home;
 
-import android.content.ClipboardManager;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -126,17 +123,26 @@ public class PlaylistViewActivity extends AppCompatActivity {
         rvTracks.setLayoutManager(new LinearLayoutManager(this));
 
         // Создаём адаптер для треков
-        trackAdapter = new PlaylistTrackAdapter(userId, playlistId, repository,
+        trackAdapter = new PlaylistTrackAdapter(
+                userId,
+                playlistId,
+                repository,
                 (track, position) -> {
+                    // Клик по треку - воспроизведение
                     List<Track> tracksToPlay = new ArrayList<>();
                     for (Track t : trackAdapter.getTracks()) {
                         if (t.getId() != null && !t.getId().isEmpty()) {
                             tracksToPlay.add(t);
                         }
                     }
-                    MusicPlayerServiceHolder.tracks = new ArrayList<>(trackAdapter.getTracks());
+                    MusicPlayerServiceHolder.tracks = tracksToPlay;
                     MusicPlayerServiceHolder.startIndex = position;
                     startActivity(new Intent(this, PlayerActivity.class));
+                },
+                position -> {
+                    // ✅ Обработчик удаления трека
+                    originalTracks = new ArrayList<>(trackAdapter.getTracks());
+                    positionAdapter.setTrackCount(trackAdapter.getTracks().size());
                 });
         rvTracks.setAdapter(trackAdapter);
         rvTracks.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -431,7 +437,6 @@ public class PlaylistViewActivity extends AppCompatActivity {
             });
         }
     }
-
     private void showTracks(List<Track> tracks) {
         rvTracks.setVisibility(View.VISIBLE);
         tvEmpty.setVisibility(View.GONE);
@@ -439,6 +444,7 @@ public class PlaylistViewActivity extends AppCompatActivity {
 
         originalTracks = new ArrayList<>(tracks);
         applySorting();
+        positionAdapter.setTrackCount(tracks.size());
     }
 
     private void showPlaylistMenu() {
@@ -457,7 +463,6 @@ public class PlaylistViewActivity extends AppCompatActivity {
         }
 
         LinearLayout layoutAddDesc = dialog.findViewById(R.id.layoutAddDescription);
-        LinearLayout layoutCopyLink = dialog.findViewById(R.id.layoutCopyLink);
         LinearLayout layoutDelete = dialog.findViewById(R.id.layoutDelete);
 
         layoutAddDesc.setOnClickListener(v -> {
@@ -465,10 +470,6 @@ public class PlaylistViewActivity extends AppCompatActivity {
             showDescriptionEditor();
         });
 
-        layoutCopyLink.setOnClickListener(v -> {
-            dialog.dismiss();
-            copyPlaylistLink();
-        });
 
         layoutDelete.setOnClickListener(v -> {
             dialog.dismiss();
@@ -547,16 +548,6 @@ public class PlaylistViewActivity extends AppCompatActivity {
                 dividerAfterDescription.setVisibility(View.GONE);
             }
         }
-    }
-
-    private void copyPlaylistLink() {
-        String playlistLink = "https://musicconstructor.app/share/playlist?id=" + playlistId + "&userId=" + userId;
-
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Ссылка на плейлист", playlistLink);
-        clipboard.setPrimaryClip(clip);
-
-        Toast.makeText(this, "Ссылка скопирована", Toast.LENGTH_SHORT).show();
     }
 
     private void confirmDeletePlaylist() {
