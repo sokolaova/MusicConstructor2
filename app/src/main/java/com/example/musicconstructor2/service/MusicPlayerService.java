@@ -303,7 +303,7 @@ public class MusicPlayerService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_music_note)
+                .setSmallIcon(R.drawable.ic_note)
                 .setContentTitle(track.getTitle())
                 .setContentText(track.getArtist())
                 .addAction(R.drawable.ic_previous, "Пред.", prevIntent)
